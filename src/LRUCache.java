@@ -1,5 +1,3 @@
-import org.jetbrains.annotations.NotNull;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,6 +6,14 @@ public class LRUCache<K, V> {
     private int size;
     private final LRUCacheLinkedList elemsList;
     private final Map<K, Node> elemsMap;
+
+    public K getHottestKey() {
+        return elemsList.getHead().key;
+    }
+
+    public V getHottestValue() {
+        return elemsList.getHead().value;
+    }
 
     private void assertSize() {
         assert size <= capacity : "Size can not be greater then capacity";
@@ -99,6 +105,10 @@ public class LRUCache<K, V> {
 
         Node getTail() {
             return tail;
+        }
+
+        Node getHead() {
+            return head;
         }
 
         void moveElemToHead(Node elem) {

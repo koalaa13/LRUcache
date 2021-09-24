@@ -1,7 +1,8 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class LRUCacheTest {
     private LRUCache<Integer, Integer> cache;
@@ -20,14 +21,14 @@ class LRUCacheTest {
     public void simpleTest() {
         cache.put(2, 2);
         int value = cache.get(2);
-        assertEquals(value, 2);
-        assertEquals(cache.getSize(), 1);
+        assertEquals(2, value);
+        assertEquals(1, cache.getSize());
     }
 
     @Test
     public void getNullTest() {
         assertNull(cache.get(2));
-        assertEquals(cache.getSize(), 0);
+        assertEquals(0, cache.getSize());
     }
 
     @Test
@@ -35,7 +36,7 @@ class LRUCacheTest {
         for (int i = 0; i <= DEFAULT_CAPACITY; ++i) {
             cache.put(i, i);
         }
-        assertEquals(cache.getSize(), 10);
+        assertEquals(10, cache.getSize());
     }
 
     @Test
@@ -45,8 +46,41 @@ class LRUCacheTest {
         }
         assertNull(cache.get(0));
         for (int i = 1; i <= DEFAULT_CAPACITY; ++i) {
-            assertEquals(cache.get(i), i);
+            assertEquals(i, cache.get(i));
         }
-        assertEquals(cache.getSize(), 10);
+        assertEquals(DEFAULT_CAPACITY, cache.getHottestValue());
+        assertEquals(DEFAULT_CAPACITY, cache.getHottestKey());
+        assertEquals(10, cache.getSize());
+    }
+
+    @Test
+    public void putSameKeyTest() {
+        cache.put(1, 1);
+        assertEquals(1, cache.get(1));
+        assertEquals(1, cache.getSize());
+        cache.put(1, 2);
+        assertEquals(2, cache.get(1));
+        assertEquals(1, cache.getSize());
+    }
+
+    @Test
+    public void capacityOneTest() {
+        createLRUCache(1);
+        cache.put(1, 1);
+        cache.put(2, 2);
+        assertEquals(1, cache.getSize());
+        assertEquals(2, cache.get(2));
+        assertNull(cache.get(1));
+    }
+
+    @Test
+    public void getNotLastAddedElemTest() {
+        for (int i = 0; i < DEFAULT_CAPACITY; ++i) {
+            cache.put(i, i);
+        }
+        // gotten element should be in head
+        cache.get(4);
+        assertEquals(4, cache.getHottestKey());
+        assertEquals(4, cache.getHottestValue());
     }
 }
